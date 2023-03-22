@@ -5,9 +5,10 @@
 
 # Example build
 #$ sudo docker build -f miniconda -t neat-python-examples --build-arg envfile=neat-python-examples.yml .
+#$ sudo docker build -f https://raw.githubusercontent.com/RomainClaret/dockerfiles/main/miniconda -t test --build-arg envfile=neat-python-examples.yml .
 
 # Example run
-#$ sudo docker run -it -v ~:/home -w /home neat-python-examples #example
+#$ sudo docker run -it -v ~:/home -w /home neat-python-examples
 
 FROM continuumio/miniconda3
 ARG envfile=environment.yml
