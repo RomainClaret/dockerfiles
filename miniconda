@@ -1,0 +1,46 @@
+# Load my environment with fresh build
+#$ docker build -f miniconda -t miniconda . #for default environment.yml file
+#$ docker build -f miniconda -t tag --build-arg envfile=filename.yml . #for custom environment file (and tag if needed)
+#$ docker run -it -v host_dir:container_dir miniconda #don't the tag if used
+
+# Example build
+#$ sudo docker build -f miniconda -t neat-python-examples --build-arg envfile=neat-python-examples.yml .
+
+# Example run
+#$ sudo docker run -it -v ~:/home -w /home neat-python-examples #example
+
+FROM continuumio/miniconda3
+ARG envfile=environment.yml
+ADD $envfile /tmp/environment.yml
+RUN conda install -c conda-forge gcc gxx
+RUN conda env create -f /tmp/environment.yml
+
+# Grab environment name from file on top of file and activate it
+RUN echo "source activate $(head -1 /tmp/environment.yml | cut -d' ' -f2)" > ~/.bashrc
+ENV PATH /opt/conda/envs/$(head -1 /tmp/environment.yml | cut -d' ' -f2)/bin:$PATH
+
+
+# Fresh build from miniconda repo
+#FROM continuumio/miniconda3
+#RUN conda create -n env python=3.6
+#RUN echo "source activate env" > ~/.bashrc
+#ENV PATH /opt/conda/envs/env/bin:$PATH
+
+# Install from scratch
+#ARG OS_TYPE=x86_64
+#ARG UBUNTU_VER=22.04
+#ARG CONDA_VER=latest
+#ARG PY_VER=3.10
+#ARG TF_VER=2.10
+#FROM ubuntu:${UBUNTU_VER}
+
+#RUN apt-get update && apt-get install -yq curl wget jq vim
+
+#RUN curl -LO "http://repo.continuum.io/miniconda/Miniconda3-${CONDA_VER}-Linux-${OS_TYPE}.sh"
+#RUN bash Miniconda3-${CONDA_VER}-Linux-${OS_TYPE}.sh -p /miniconda -b
+#RUN rm Miniconda3-${CONDA_VER}-Linux-${OS_TYPE}.sh
+#ENV PATH=/miniconda/bin:${PATH}
+#RUN conda update -y conda
+
+#RUN conda create --name test-python310 python=3.10
+
